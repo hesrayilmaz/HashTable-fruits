@@ -1,21 +1,12 @@
 
 public class DoubleHashingHashST<Key, Value> {
 
-    // must be a power of 2
-    private static final int INIT_CAPACITY = 4;
-
     private int n;           // number of key-value pairs in the symbol table
     private int m;           // size of double hashing table
     private Key[] keys;      // the keys
     private Value[] vals;    // the values
     private int totalprimeSize;
 
-    /**
-     * Initializes an empty symbol table.
-     */
-    public DoubleHashingHashST() {
-        this(INIT_CAPACITY);
-    }
 
     /**
      * Initializes an empty symbol table with the specified initial capacity.
@@ -99,19 +90,10 @@ public class DoubleHashingHashST<Key, Value> {
     }
 
     // hash function for keys - returns value between 0 and m-1
-    private int hashTextbook(Key key) {
+    private int hash1(Key key) {
         return (key.hashCode() & 0x7fffffff) % m;
     }
 
-   
-    private int hash1(Key key)
-    {
-        int myhashVal1 = key.hashCode();
-        myhashVal1 %= m;
-        if (myhashVal1 < 0)
-            myhashVal1 += m;
-        return myhashVal1;
-    }
 
     private int hash2(Key key)
     {
@@ -153,6 +135,7 @@ public class DoubleHashingHashST<Key, Value> {
             return;
         }
 
+        n++;
         // double table size if 50% full
         if (n >= m/2) rehash(2*m);
 
@@ -167,7 +150,7 @@ public class DoubleHashingHashST<Key, Value> {
         }
         keys[hashing1] = key;
         vals[hashing1] = val;
-        n++;
+       
     }
 
     /**
@@ -178,16 +161,14 @@ public class DoubleHashingHashST<Key, Value> {
      * @throws IllegalArgumentException if {@code key} is {@code null}
      */
     public Value find(Key key) {
-    	 int hash1 = hash1(key);
-         int hash2 = hash2(key);
-  
-         while (keys[hash1] != null
-                && !keys[hash1].equals(key)) {
-             hash1 += hash2;
-             hash1 %= m;
-         }
-         return vals[hash1];
+    	 
+         for (int hash1 = hash1(key), hash2 = hash2(key); keys[hash1] != null;  hash1 += hash2,hash1 %= m)
+             if (keys[hash1].equals(key))
+                 return vals[hash1];
         
+         System.out.println("item not found");
+         return null;
+       
     }
    
 
@@ -214,34 +195,19 @@ public class DoubleHashingHashST<Key, Value> {
         keys[hash1] = null;
         vals[hash1] = null;
 
-        // rehash all keys in same cluster
-        hash1 += hash2;
-        hash1 %= m;
-        
-        while (keys[hash1] != null) {
-            // delete keys[i] an vals[i] and reinsert
-            Key   keyToRehash = keys[hash1];
-            Value valToRehash = vals[hash1];
-            keys[hash1] = null;
-            vals[hash1] = null;
-            n--;
-            insert(keyToRehash, valToRehash);
-            hash1 += hash2;
-            hash1 %= m;
-        }
-
         n--;
 
     }
     
     public void printTable()
     {
-        // Display message
-        System.out.println("\nHash Table");
- 
-        for (int i = 0; i < m; i++)
-            if (keys[i] != null)
-                System.out.println(keys[i] + " " + vals[i]);
+    	System.out.println("\nDouble Hashing Hash Table:");
+    	
+    	 for (int i = 0; i < m; i++)
+    		 if (keys[i] != null)
+                 System.out.println("["+keys[i] + ", '" + vals[i]+"']");
+             else
+             	System.out.println("[0, '']");
     }
 
     /**

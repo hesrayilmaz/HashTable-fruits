@@ -1,22 +1,12 @@
 
 public class LinearProbingHashST<Key, Value> {
 
-    // must be a power of 2
-    private static final int INIT_CAPACITY = 4;
-
     private int n;           // number of key-value pairs in the symbol table
     private int m;           // size of linear probing table
     private Key[] keys;      // the keys
     private Value[] vals;    // the values
 
-
-    /**
-     * Initializes an empty symbol table.
-     */
-    public LinearProbingHashST() {
-        this(INIT_CAPACITY);
-    }
-
+    
     /**
      * Initializes an empty symbol table with the specified initial capacity.
      *
@@ -61,21 +51,15 @@ public class LinearProbingHashST<Key, Value> {
     }
 
     // hash function for keys - returns value between 0 and m-1
-    private int hashTextbook(Key key) {
+    private int hash(Key key) {
         return (key.hashCode() & 0x7fffffff) % m;
     }
 
-    // hash function for keys - returns value between 0 and m-1 (assumes m is a power of 2)
-    // (from Java 7 implementation, protects against poor quality hashCode() implementations)
-    private int hash(Key key) {
-        int h = key.hashCode();
-        h ^= (h >>> 20) ^ (h >>> 12) ^ (h >>> 7) ^ (h >>> 4);
-        return h & (m-1);
-    }
 
     // resizes the hash table to the given capacity by re-hashing all of the keys
     private void rehash(int capacity) {
         LinearProbingHashST<Key, Value> temp = new LinearProbingHashST<Key, Value>(capacity);
+        
         for (int i = 0; i < m; i++) {
             if (keys[i] != null) {
                 temp.insert(keys[i], vals[i]);
@@ -103,6 +87,7 @@ public class LinearProbingHashST<Key, Value> {
             return;
         }
 
+        n++;
         // double table size if 50% full
         if (n >= m/2) rehash(2*m);
 
@@ -115,7 +100,7 @@ public class LinearProbingHashST<Key, Value> {
         }
         keys[i] = key;
         vals[i] = val;
-        n++;
+       
     }
 
     /**
@@ -130,6 +115,7 @@ public class LinearProbingHashST<Key, Value> {
         for (int i = hash(key); keys[i] != null; i = (i + 1) % m)
             if (keys[i].equals(key))
                 return vals[i];
+        System.out.println("item not found");
         return null;
     }
 
@@ -154,30 +140,19 @@ public class LinearProbingHashST<Key, Value> {
         keys[i] = null;
         vals[i] = null;
 
-        // rehash all keys in same cluster
-        i = (i + 1) % m;
-        while (keys[i] != null) {
-            // delete keys[i] an vals[i] and reinsert
-            Key   keyToRehash = keys[i];
-            Value valToRehash = vals[i];
-            keys[i] = null;
-            vals[i] = null;
-            n--;
-            insert(keyToRehash, valToRehash);
-            i = (i + 1) % m;
-        }
-
         n--;
 }
     
     public void printTable()
     {
-        // Display message
-        System.out.println("\nHash Table");
- 
+   
+    	System.out.println("\nLinear Probing Hash Table:");
         for (int i = 0; i < m; i++)
             if (keys[i] != null)
-                System.out.println(keys[i] + " " + vals[i]);
+                System.out.println("["+keys[i] + ", '" + vals[i]+"']");
+            else
+            	System.out.println("[0, '']");
+            	
     }
 
     /**
