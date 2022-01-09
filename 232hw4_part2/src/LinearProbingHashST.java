@@ -3,9 +3,26 @@ public class LinearProbingHashST<Key, Value> {
 
     private int n;           // number of key-value pairs in the symbol table
     private int m;           // size of linear probing table
-    private Key[] keys;      // the keys
-    private Value[] vals;    // the values
+    private Node[] hashTableArr;
 
+    
+    
+    private static class Node
+    {
+    	private Object key; 
+    	private Object val; 
+    	private int status;
+    	
+    	public Node(Object key,Object val) {
+    		this.key=key;
+    		this.val=val;
+    		status=0;
+    	}
+    	
+    	public String toString() {
+    		return "["+key+ ", '"+val+ "', "+status+"]";
+    	}
+    }
     
     /**
      * Initializes an empty symbol table with the specified initial capacity.
@@ -15,8 +32,7 @@ public class LinearProbingHashST<Key, Value> {
     public LinearProbingHashST(int capacity) {
         m = capacity;
         n = 0;
-        keys = (Key[])   new Object[m];
-        vals = (Value[]) new Object[m];
+        hashTableArr = new Node[m];
     }
 
     /**
@@ -61,13 +77,12 @@ public class LinearProbingHashST<Key, Value> {
         LinearProbingHashST<Key, Value> temp = new LinearProbingHashST<Key, Value>(capacity);
         
         for (int i = 0; i < m; i++) {
-            if (keys[i] != null) {
-                temp.insert(keys[i], vals[i]);
+            if (hashTableArr[i] != null) {
+                temp.insert((Key)hashTableArr[i].key, (Value)hashTableArr[i].val);
             }
         }
-        keys = temp.keys;
-        vals = temp.vals;
-        m    = temp.m;
+        hashTableArr=temp.hashTableArr;
+        m = temp.m;
     }
 
     /**
@@ -92,14 +107,13 @@ public class LinearProbingHashST<Key, Value> {
         if (n >= m/2) rehash(2*m);
 
         int i;
-        for (i = hash(key); keys[i] != null; i = (i + 1) % m) {
-            if (keys[i].equals(key)) {
-                vals[i] = val;
+        for (i = hash(key); hashTableArr[i] != null; i = (i + 1) % m) {
+            if (hashTableArr[i].key.equals(key)) {
+            	hashTableArr[i].val = val;
                 return;
             }
         }
-        keys[i] = key;
-        vals[i] = val;
+        hashTableArr[i]=new Node(key,val);
        
     }
 
@@ -112,9 +126,9 @@ public class LinearProbingHashST<Key, Value> {
      */
     public Value find(Key key) {
        
-        for (int i = hash(key); keys[i] != null; i = (i + 1) % m)
-            if (keys[i].equals(key))
-                return vals[i];
+        for (int i = hash(key); hashTableArr[i].key != null; i = (i + 1) % m)
+            if (hashTableArr[i].key.equals(key))
+                return (Value)hashTableArr[i].val;
         System.out.println("item not found");
         return null;
     }
@@ -132,13 +146,12 @@ public class LinearProbingHashST<Key, Value> {
 
         // find position i of key
         int i = hash(key);
-        while (!key.equals(keys[i])) {
+        while (!key.equals(hashTableArr[i].key)) {
             i = (i + 1) % m;
         }
 
-        // delete key and associated value
-        keys[i] = null;
-        vals[i] = null;
+        // change status to 1 to indicate that it's deleted
+        hashTableArr[i].status=1;
 
         n--;
 }
@@ -148,10 +161,10 @@ public class LinearProbingHashST<Key, Value> {
    
     	System.out.println("\nLinear Probing Hash Table:");
         for (int i = 0; i < m; i++)
-            if (keys[i] != null)
-                System.out.println("["+keys[i] + ", '" + vals[i]+"']");
+            if (hashTableArr[i] != null)
+                System.out.println(hashTableArr[i]);
             else
-            	System.out.println("[0, '']");
+            	System.out.println("[0, '',0]");
             	
     }
 

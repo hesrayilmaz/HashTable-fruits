@@ -1,13 +1,28 @@
-
 public class DoubleHashingHashST<Key, Value> {
 
     private int n;           // number of key-value pairs in the symbol table
     private int m;           // size of double hashing table
-    private Key[] keys;      // the keys
-    private Value[] vals;    // the values
+    private Node[] hashTableArr;
     private int totalprimeSize;
 
 
+    private static class Node
+    {
+    	private Object key; 
+    	private Object val; 
+    	private int status;
+    	
+    	public Node(Object key,Object val) {
+    		this.key=key;
+    		this.val=val;
+    		status=0;
+    	}
+    	
+    	public String toString() {
+    		return "["+key+ ", '"+val+ "', "+status+"]";
+    	}
+    }
+    
     /**
      * Initializes an empty symbol table with the specified initial capacity.
      *
@@ -16,8 +31,7 @@ public class DoubleHashingHashST<Key, Value> {
     public DoubleHashingHashST(int capacity) {
         m = capacity;
         n = 0;
-        keys = (Key[])   new Object[m];
-        vals = (Value[]) new Object[m];
+        hashTableArr = new Node[m];
         totalprimeSize = getPrime();
     }
 
@@ -109,12 +123,11 @@ public class DoubleHashingHashST<Key, Value> {
     private void rehash(int capacity) {
     	DoubleHashingHashST<Key, Value> temp = new DoubleHashingHashST<Key, Value>(capacity);
         for (int i = 0; i < m; i++) {
-            if (keys[i] != null) {
-                temp.insert(keys[i], vals[i]);
+            if (hashTableArr[i] != null) {
+                temp.insert((Key)hashTableArr[i].key, (Value)hashTableArr[i].val);
             }
         }
-        keys = temp.keys;
-        vals = temp.vals;
+        hashTableArr=temp.hashTableArr;
         m    = temp.m;
     }
 
@@ -142,14 +155,13 @@ public class DoubleHashingHashST<Key, Value> {
         
         int hashing1;
         int hashing2 = hash2(key);
-        for (hashing1 = hash1(key); keys[hashing1] != null; hashing1 += hashing2, hashing1 %= m) {
-            if (keys[hashing1].equals(key)) {
-                vals[hashing1] = val;
+        for (hashing1 = hash1(key); hashTableArr[hashing1] != null; hashing1 += hashing2, hashing1 %= m) {
+            if (hashTableArr[hashing1].key.equals(key)) {
+            	hashTableArr[hashing1].val = val;
                 return;
             }
         }
-        keys[hashing1] = key;
-        vals[hashing1] = val;
+        hashTableArr[hashing1]=new Node(key, val);
        
     }
 
@@ -162,9 +174,9 @@ public class DoubleHashingHashST<Key, Value> {
      */
     public Value find(Key key) {
     	 
-         for (int hash1 = hash1(key), hash2 = hash2(key); keys[hash1] != null;  hash1 += hash2,hash1 %= m)
-             if (keys[hash1].equals(key))
-                 return vals[hash1];
+         for (int hash1 = hash1(key), hash2 = hash2(key); hashTableArr[hash1] != null;  hash1 += hash2,hash1 %= m)
+             if (hashTableArr[hash1].key.equals(key))
+                 return (Value)hashTableArr[hash1].val;
         
          System.out.println("item not found");
          return null;
@@ -186,14 +198,13 @@ public class DoubleHashingHashST<Key, Value> {
         // find position i of key
         int hash1 = hash1(key);
         int hash2 = hash2(key);
-        while (!key.equals(keys[hash1])) {
+        while (!key.equals(hashTableArr[hash1].key)) {
         	hash1 += hash2;
             hash1 %= m;
         }
 
-        // delete key and associated value
-        keys[hash1] = null;
-        vals[hash1] = null;
+        // change status to 1 to indicate that it's deleted
+        hashTableArr[hash1].status=1;
 
         n--;
 
@@ -204,10 +215,10 @@ public class DoubleHashingHashST<Key, Value> {
     	System.out.println("\nDouble Hashing Hash Table:");
     	
     	 for (int i = 0; i < m; i++)
-    		 if (keys[i] != null)
-                 System.out.println("["+keys[i] + ", '" + vals[i]+"']");
+    		 if (hashTableArr[i] != null)
+                 System.out.println(hashTableArr[i]);
              else
-             	System.out.println("[0, '']");
+             	System.out.println("[0, '',0]");
     }
 
     /**

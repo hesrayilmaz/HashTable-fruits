@@ -13,6 +13,9 @@ public class Test {
 		linearHT.printTable();
 		linearHT.insert(4218,"apricots");
 		linearHT.printTable();
+		linearHT.delete(4218);
+		linearHT.printTable();
+		
 	}
 
 }
