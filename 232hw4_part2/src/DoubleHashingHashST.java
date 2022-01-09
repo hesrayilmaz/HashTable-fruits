@@ -97,10 +97,9 @@ public class DoubleHashingHashST<Key, Value> {
      * @param  key the key
      * @return {@code true} if this symbol table contains {@code key};
      *         {@code false} otherwise
-     * @throws IllegalArgumentException if {@code key} is {@code null}
      */
     public boolean contains(Key key) {
-        return find(key) != null;
+        return isFound(key) != null;
     }
 
     // hash function for keys - returns value between 0 and m-1
@@ -139,7 +138,6 @@ public class DoubleHashingHashST<Key, Value> {
      *
      * @param  key the key
      * @param  val the value
-     * @throws IllegalArgumentException if {@code key} is {@code null}
      */
     public void insert(Key key, Value val) {
 
@@ -165,20 +163,25 @@ public class DoubleHashingHashST<Key, Value> {
        
     }
 
+    public void find(Key key) {
+    	if(isFound(key)!=null)
+    		System.out.println(isFound(key));
+    	else
+    		 System.out.println("item not found");
+    }
+    
     /**
      * Returns the value associated with the specified key.
      * @param key the key
      * @return the value associated with {@code key};
      *         {@code null} if no such value
-     * @throws IllegalArgumentException if {@code key} is {@code null}
      */
-    public Value find(Key key) {
+    public Value isFound(Key key) {
     	 
          for (int hash1 = hash1(key), hash2 = hash2(key); hashTableArr[hash1] != null;  hash1 += hash2,hash1 %= m)
-             if (hashTableArr[hash1].key.equals(key))
+             if (hashTableArr[hash1].key.equals(key) && hashTableArr[hash1].status==0)
                  return (Value)hashTableArr[hash1].val;
-        
-         System.out.println("item not found");
+         
          return null;
        
     }
@@ -189,7 +192,6 @@ public class DoubleHashingHashST<Key, Value> {
      * (if the key is in this symbol table).    
      *
      * @param  key the key
-     * @throws IllegalArgumentException if {@code key} is {@code null}
      */
     public void delete(Key key) {
         

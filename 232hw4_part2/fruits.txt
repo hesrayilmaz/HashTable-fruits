@@ -1,0 +1,21 @@
+key		fruit
+4131	apple fuji
+4227	avocado small
+4232	banana baby
+4239	black berries
+4045	cherries red
+4260	coconut white
+4022	grapes green
+4053	lemons yellow
+4048	limes
+4051	mango
+4050	melon cantaloupe
+4036	nectarines
+4931	nuts peanuts
+4012	orange navel
+4395	papaya
+4038	peaches yellow
+4430	pineapple
+4028	strawberry basket
+3146	tomatoes cherry
+4032	watermelon seedless

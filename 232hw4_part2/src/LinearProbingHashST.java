@@ -6,7 +6,6 @@ public class LinearProbingHashST<Key, Value> {
     private Node[] hashTableArr;
 
     
-    
     private static class Node
     {
     	private Object key; 
@@ -60,10 +59,9 @@ public class LinearProbingHashST<Key, Value> {
      * @param  key the key
      * @return {@code true} if this symbol table contains {@code key};
      *         {@code false} otherwise
-     * @throws IllegalArgumentException if {@code key} is {@code null}
      */
     public boolean contains(Key key) {
-    	return find(key) != null;
+    	return isFound(key) != null;
     }
 
     // hash function for keys - returns value between 0 and m-1
@@ -93,7 +91,6 @@ public class LinearProbingHashST<Key, Value> {
      *
      * @param  key the key
      * @param  val the value
-     * @throws IllegalArgumentException if {@code key} is {@code null}
      */
     public void insert(Key key, Value val) {
        
@@ -117,19 +114,26 @@ public class LinearProbingHashST<Key, Value> {
        
     }
 
+    public void find(Key key) {
+    	if(isFound(key)!=null)
+    		System.out.println(isFound(key));
+    	else
+    		 System.out.println("item not found");
+    }
+    
     /**
      * Returns the value associated with the specified key.
      * @param key the key
      * @return the value associated with {@code key};
      *         {@code null} if no such value
-     * @throws IllegalArgumentException if {@code key} is {@code null}
      */
-    public Value find(Key key) {
+    
+    
+    private Value isFound(Key key) {
        
-        for (int i = hash(key); hashTableArr[i].key != null; i = (i + 1) % m)
-            if (hashTableArr[i].key.equals(key))
+        for (int i = hash(key); hashTableArr[i] != null; i = (i + 1) % m)
+            if (hashTableArr[i].key.equals(key) && hashTableArr[i].status==0)
                 return (Value)hashTableArr[i].val;
-        System.out.println("item not found");
         return null;
     }
 
@@ -138,7 +142,6 @@ public class LinearProbingHashST<Key, Value> {
      * (if the key is in this symbol table).    
      *
      * @param  key the key
-     * @throws IllegalArgumentException if {@code key} is {@code null}
      */
     public void delete(Key key) {
        
